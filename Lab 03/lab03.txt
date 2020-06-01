@@ -1,0 +1,41 @@
+1)
+(i)
+mysql> explain SELECT * FROM departments WHERE dept_name = "Finance";
++----+-------------+-------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+| id | select_type | table       | partitions | type | possible_keys | key  | key_len | ref  | rows | filtered | Extra       |
++----+-------------+-------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+|  1 | SIMPLE      | departments | NULL       | ALL  | NULL          | NULL | NULL    | NULL |    9 |    11.11 | Using where |
++----+-------------+-------------+------------+------+---------------+------+---------+------+------+----------+-------------+
+1 row in set, 1 warning (0.00 sec)
+
+(ii)
+mysql> explain SELECT * FROM departments WHERE dept_no = "d002";
++----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+| id | select_type | table       | partitions | type  | possible_keys | key     | key_len | ref   | rows | filtered | Extra |
++----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+|  1 | SIMPLE      | departments | NULL       | const | PRIMARY       | PRIMARY | 14      | const |    1 |   100.00 | NULL  |
++----+-------------+-------------+------------+-------+---------------+---------+---------+-------+------+----------+-------+
+1 row in set, 1 warning (0.00 sec)
+
+
+THe query:
+
+select emplist.first_name,titleperiod.title,titleperiod.period from emplist,titleperiod where emplist.emp_no=titleperiod.emp_no and titleperiod.period>4000;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////...................ADD all the columns in the where clause.................................//////////////////////
+Explain:
+
+explain select emplist.first_name,titleperiod.title,titleperiod.period from emplist,titleperiod where emplist.emp_no=titleperiod.emp_no and titleperiod.period>4000;
+
+mysql> explain select emplist.first_name,titleperiod.title,titleperiod.period from emplist,titleperiod where emplist.emp_no=titleperiod.emp_no and titleperiod.period>4000;
+
++----+-------------+-------------+------------+------+---------------+--------+---------+------------------------+--------+----------+-------------+
+| id | select_type | table       | partitions | type | possible_keys | key    | key_len | ref                    | rows   | filtered | Extra       |
++----+-------------+-------------+------------+------+---------------+--------+---------+------------------------+--------+----------+-------------+
+|  1 | SIMPLE      | emplist     | NULL       | ALL  | PRIMARY       | NULL   | NULL    | NULL                   | 300024 |   100.00 | NULL        |
+|  1 | SIMPLE      | titleperiod | NULL       | ref  | emp_no,period | emp_no | 4       | company.emplist.emp_no |      1 |    68.49 | Using where |
++----+-------------+-------------+------------+------+---------------+--------+---------+------------------------+--------+----------+-------------+
+2 rows in set, 1 warning (0.02 sec)
+
